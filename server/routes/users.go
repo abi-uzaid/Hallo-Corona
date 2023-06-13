@@ -3,14 +3,14 @@ package routes
 import (
 	"hallo-corona/handlers"
 	"hallo-corona/pkg/middleware"
-	"hallo-corona/pkg/postgres"
+	"hallo-corona/pkg/mysql"
 	"hallo-corona/repositories"
 
 	"github.com/gin-gonic/gin"
 )
 
 func UserRoutes(r *gin.RouterGroup) {
-	userRepository := repositories.RepositoryUser(postgres.DB)
+	userRepository := repositories.RepositoryUser(mysql.DB)
 	h := handlers.HandlerUser(userRepository)
 
 	r.GET("/users", h.FindUsers)

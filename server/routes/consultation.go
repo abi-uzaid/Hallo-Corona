@@ -3,14 +3,14 @@ package routes
 import (
 	"hallo-corona/handlers"
 	"hallo-corona/pkg/middleware"
-	"hallo-corona/pkg/postgres"
+	"hallo-corona/pkg/mysql"
 	"hallo-corona/repositories"
 
 	"github.com/gin-gonic/gin"
 )
 
 func ConsultationRoutes(r *gin.RouterGroup) {
-	consultationRepository := repositories.RepositoryConsultation(postgres.DB)
+	consultationRepository := repositories.RepositoryConsultation(mysql.DB)
 	h := handlers.HandlerConsultation(consultationRepository)
 
 	r.GET("/consultations", middleware.Auth(h.FindConsultations))

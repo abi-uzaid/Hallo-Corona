@@ -3,11 +3,11 @@ package database
 import (
 	"fmt"
 	"hallo-corona/models"
-	"hallo-corona/pkg/postgres"
+	"hallo-corona/pkg/mysql"
 )
 
 func RunMigration() {
-	err := postgres.DB.AutoMigrate(&models.User{}, &models.Article{}, &models.Consultation{})
+	err := mysql.DB.AutoMigrate(&models.User{}, &models.Article{}, &models.Consultation{})
 
 	if err != nil {
 		fmt.Println(err)

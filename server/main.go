@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"hallo-corona/database"
-	"hallo-corona/pkg/postgres"
+	"hallo-corona/pkg/mysql"
 	"hallo-corona/routes"
 	"os"
 
@@ -18,7 +18,7 @@ func main() {
 		panic("Failed to load env file")
 	}
 
-	postgres.DatabaseInit()
+	mysql.DatabaseInit()
 
 	database.RunMigration()
 	gin.SetMode(gin.ReleaseMode)
