@@ -13,12 +13,12 @@ import (
 )
 
 func main() {
-	e := echo.New()
 	errEnv := godotenv.Load()
 	if errEnv != nil {
 		panic("Failed to load env file")
 	}
 
+	e := echo.New()
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
