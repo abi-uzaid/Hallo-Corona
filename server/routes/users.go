@@ -3,19 +3,19 @@ package routes
 import (
 	"hallo-corona/handlers"
 	"hallo-corona/pkg/middleware"
-	"hallo-corona/pkg/mysql"
+	"hallo-corona/pkg/postgres"
 	"hallo-corona/repositories"
 
-	"github.com/labstack/echo/v4"
+	"github.com/gin-gonic/gin"
 )
 
-func UserRoutes(e *echo.Group) {
-	userRepository := repositories.RepositoryUser(mysql.DB)
+func UserRoutes(r *gin.RouterGroup) {
+	userRepository := repositories.RepositoryUser(postgres.DB)
 	h := handlers.HandlerUser(userRepository)
 
-	e.GET("/users", h.FindUsers)
-	e.GET("/user/:id", h.GetUser)
-	e.PATCH("/user", middleware.Auth(h.UpdateUser))
-	e.DELETE("/user", middleware.Auth(h.DeleteUser))
-	e.PATCH("/change-image/{id}", middleware.UploadFile(h.ChangeImage))
+	r.GET("/users", h.FindUsers)
+	r.GET("/user/:id", h.GetUser)
+	r.PATCH("/user", middleware.Auth(h.UpdateUser))
+	r.DELETE("/user", middleware.Auth(h.DeleteUser))
+	r.PATCH("/change-image/{id}", middleware.UploadFile(h.ChangeImage))
 }

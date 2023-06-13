@@ -1,10 +1,12 @@
 package routes
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/gin-gonic/gin"
+)
 
-func RouteInit(e *echo.Group) {
-	AuthRoutes(e)
-	UserRoutes(e)
-	ArticleRoutes(e)
-	ConsultationRoutes(e)
+func RouteInit(r *gin.RouterGroup) {
+	AuthRoutes(r)
+	UserRoutes(r)
+	ArticleRoutes(r)
+	ConsultationRoutes(r)
 }

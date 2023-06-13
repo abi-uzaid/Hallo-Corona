@@ -12,9 +12,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/labstack/echo/v4"
 )
 
 type handlerAuth struct {
@@ -25,21 +25,24 @@ func HandlerAuth(AuthRepository repositories.AuthRepository) *handlerAuth {
 	return &handlerAuth{AuthRepository}
 }
 
-func (h *handlerAuth) Register(c echo.Context) error {
+func (h *handlerAuth) Register(c *gin.Context) {
 	request := new(authdto.RegisterRequest)
 	if err := c.Bind(request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	validation := validator.New()
 	err := validation.Struct(request)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	password, err := bcrypt.HashingPassword(request.Password)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	user := models.User{
@@ -56,16 +59,19 @@ func (h *handlerAuth) Register(c echo.Context) error {
 
 	data, err := h.AuthRepository.Register(user)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Your registration is success", Data: data})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Your registration is success", Data: data})
+	return
 }
 
-func (h *handlerAuth) Login(c echo.Context) error {
+func (h *handlerAuth) Login(c *gin.Context) {
 	request := new(authdto.LoginRequest)
 	if err := c.Bind(request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	data := models.User{
@@ -75,24 +81,27 @@ func (h *handlerAuth) Login(c echo.Context) error {
 
 	userLogin, err := h.AuthRepository.Login(data.Username)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "username not registered"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "username not registered"})
+		return
 	}
 
 	isValid := bcrypt.CheckPasswordHash(request.Password, userLogin.Password)
 	if !isValid {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "Incorrect email or password"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "Incorrect email or password"})
+		return
 	}
 
 	claims := jwt.MapClaims{}
 	claims["id"] = userLogin.ID
 	claims["listAs"] = userLogin.ListAs
 	// claims["role"] = userLogin.Role
-	claims["exp"] = time.Now().Add(time.Hour * 4).Unix() // 4 hours expired
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix() // 4 hours expired
 
 	token, generateTokenErr := jwtToken.GenerateToken(&claims)
 	if generateTokenErr != nil {
 		log.Println(generateTokenErr)
-		return echo.NewHTTPError(http.StatusUnauthorized)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error" : "Unauthorized"})
+		return
 	}
 
 	loginResponse := authdto.LoginResponse{
@@ -108,16 +117,18 @@ func (h *handlerAuth) Login(c echo.Context) error {
 		Token:   token,
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: loginResponse})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: loginResponse})
+	return
 }
 
-func (h *handlerAuth) CheckAuth(c echo.Context) error {
-	userLogin := c.Get("userLogin")
+func (h *handlerAuth) CheckAuth(c *gin.Context) {
+	userLogin := c.MustGet("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
 	user, _ := h.AuthRepository.CheckAuth(int(userId))
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: responseCheckAuth(user)})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: responseCheckAuth(user)})
+	return
 }
 
 // type resp struct {

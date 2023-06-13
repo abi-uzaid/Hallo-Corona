@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/labstack/echo/v4"
 )
 
 type handler struct {
@@ -21,38 +21,44 @@ func HandlerUser(UserRepository repositories.UserRepository) *handler {
 	return &handler{UserRepository: UserRepository}
 }
 
-func (h *handler) FindUsers(c echo.Context) error {
+func (h *handler) FindUsers(c *gin.Context) {
 	users, err := h.UserRepository.FindUsers()
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: users})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: users})
+	return
 }
 
-func (h *handler) GetUser(c echo.Context) error {
+func (h *handler) GetUser(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	user, err := h.UserRepository.GetUser(id)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "User data successfully obtained", Data: user})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "User data successfully obtained", Data: user})
+	return
 }
 
-func (h *handler) UpdateUser(c echo.Context) error {
-	userLogin := c.Get("userLogin")
+func (h *handler) UpdateUser(c *gin.Context) {
+	userLogin := c.MustGet("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
 	request := new(usersdto.UpdateUserRequest)
 	if err := c.Bind(&request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	user, err := h.UserRepository.GetUser(int(userId))
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	if request.Fullname != "" {
@@ -84,28 +90,33 @@ func (h *handler) UpdateUser(c echo.Context) error {
 
 	data, err := h.UserRepository.UpdateUser(user)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "User data updated successfully", Data: convertResponse(data)})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "User data updated successfully", Data: convertResponse(data)})
+	return
 }
 
-func (h *handler) DeleteUser(c echo.Context) error {
-	userLogin := c.Get("userLogin")
+func (h *handler) DeleteUser(c *gin.Context) {
+	userLogin := c.MustGet("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
 	// id, _ := strconv.Atoi(c.Param("id"))
 
 	user, err := h.UserRepository.GetUser(int(userId))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	data, err := h.UserRepository.DeleteUser(user)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Delete Success", Data: convertResponse(data)})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Delete Success", Data: convertResponse(data)})
+	return
 }
 
 func convertResponse(u models.User) usersdto.UserResponse {
@@ -121,13 +132,14 @@ func convertResponse(u models.User) usersdto.UserResponse {
 	}
 }
 
-func (h *handler) ChangeImage(c echo.Context) error {
+func (h *handler) ChangeImage(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
-	dataFile := c.Get("dataFile").(string)
+	dataFile := c.MustGet("dataFile").(string)
 
 	request := usersdto.ChangeImageRequest{
 		Image: dataFile,
@@ -136,12 +148,14 @@ func (h *handler) ChangeImage(c echo.Context) error {
 	validation := validator.New()
 	err = validation.Struct(request)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
 
 	user, err := h.UserRepository.GetUser(id)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	// if request.Title != "" {
@@ -158,7 +172,9 @@ func (h *handler) ChangeImage(c echo.Context) error {
 
 	data, err := h.UserRepository.ChangeImage(user)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: data})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: data})
+	return
 }

@@ -13,9 +13,9 @@ import (
 
 	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/labstack/echo/v4"
 )
 
 type handlerArticle struct {
@@ -26,45 +26,49 @@ func HandlerArticle(ArticleRepository repositories.ArticleRepository) *handlerAr
 	return &handlerArticle{ArticleRepository}
 }
 
-func (h *handlerArticle) FindArticles(c echo.Context) error {
+func (h *handlerArticle) FindArticles(c *gin.Context) {
 	articles, err := h.ArticleRepository.FindArticles()
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: articles})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: articles})
 }
 
-func (h *handlerArticle) GetArticel(c echo.Context) error {
+func (h *handlerArticle) GetArticel(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	products, err := h.ArticleRepository.GetArticle(id)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: convertResponseArticle(products)})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: convertResponseArticle(products)})
+	return
 }
 
-func (h *handlerArticle) CreateArticle(c echo.Context) error {
-	userLogin := c.Get("userLogin")
+func (h *handlerArticle) CreateArticle(c *gin.Context) {
+	userLogin := c.MustGet("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
-	dataFile := c.Get("dataFile").(string)
+	dataFile := c.MustGet("dataFile").(string)
 	fmt.Println("this is data file", dataFile)
 
 	request := articledto.CreateArticleRequest{
-		Title:    c.FormValue("title"),
+		Title:    c.PostForm("title"),
 		UserID:   int(userId),
 		Image:    dataFile,
-		Desc:     c.FormValue("desc"),
-		Category: c.FormValue("category"),
+		Desc:     c.PostForm("desc"),
+		Category: c.PostForm("category"),
 	}
 
 	validation := validator.New()
 	err := validation.Struct(request)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
 
 	var ctx = context.Background()
@@ -94,34 +98,38 @@ func (h *handlerArticle) CreateArticle(c echo.Context) error {
 
 	data, err := h.ArticleRepository.CreateArticle(article)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create article success", Data: data})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create article success", Data: data})
+	return
 
 }
 
-func (h *handlerArticle) UpdateArticle(c echo.Context) error {
-	userLogin := c.Get("userLogin")
+func (h *handlerArticle) UpdateArticle(c *gin.Context) {
+	userLogin := c.MustGet("userLogin")
 	userRole := userLogin.(jwt.MapClaims)["listAs"].(string)
 	if userRole == "doctor" {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+			c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+			return
 		}
 
-		dataFile := c.Get("dataFile").(string)
+		dataFile := c.MustGet("dataFile").(string)
 
 		request := articledto.UpdateArticleRequest{
-			Title: c.FormValue("title"),
+			Title: c.PostForm("title"),
 			Image: dataFile,
-			Desc:  c.FormValue("desc"),
+			Desc:  c.PostForm("desc"),
 		}
 
 		validation := validator.New()
 		err = validation.Struct(request)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+			c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+			return
 		}
 
 		var ctx = context.Background()
@@ -141,7 +149,8 @@ func (h *handlerArticle) UpdateArticle(c echo.Context) error {
 
 		article, err := h.ArticleRepository.GetArticle(id)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+			c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+			return
 		}
 
 		if request.Title != "" {
@@ -158,44 +167,54 @@ func (h *handlerArticle) UpdateArticle(c echo.Context) error {
 
 		articleUpdate, err := h.ArticleRepository.UpdateArticle(article)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+			c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+			return
 		}
-		return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: articleUpdate})
+		c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: articleUpdate})
+		return
 	}
-	return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "Access denied"})
+	c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "Access denied"})
+	return
 }
 
-func (h *handlerArticle) DeleteArticle(c echo.Context) error {
+func (h *handlerArticle) DeleteArticle(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "Invalid article ID"})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "Invalid article ID"})
+		return
 	}
 
 	article, err := h.ArticleRepository.GetArticle(id)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	articleDel, err := h.ArticleRepository.DeleteArticle(article)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Delete article success", Data: articleDel})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Delete article success", Data: articleDel})
+	return
 }
 
-func (h *handlerArticle) FindMyArticle(c echo.Context) error {
+func (h *handlerArticle) FindMyArticle(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	articles, err := h.ArticleRepository.FindMyArticle(id)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Succes", Data: articles})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Succes", Data: articles})
+	return
 }
 
 func convertResponseArticle(u models.Article) articledto.ArticleResponse {

@@ -3,17 +3,17 @@ package routes
 import (
 	"hallo-corona/handlers"
 	"hallo-corona/pkg/middleware"
-	"hallo-corona/pkg/mysql"
+	"hallo-corona/pkg/postgres"
 	"hallo-corona/repositories"
 
-	"github.com/labstack/echo/v4"
+	"github.com/gin-gonic/gin"
 )
 
-func AuthRoutes(e *echo.Group) {
-	authRepository := repositories.RepositoryAuth(mysql.DB)
+func AuthRoutes(r *gin.RouterGroup) {
+	authRepository := repositories.RepositoryAuth(postgres.DB)
 	h := handlers.HandlerAuth(authRepository)
 
-	e.POST("/register", h.Register)
-	e.POST("/login", h.Login)
-	e.GET("/check-auth", middleware.Auth(h.CheckAuth))
+	r.POST("/register", h.Register)
+	r.POST("/login", h.Login)
+	r.GET("/check-auth", middleware.Auth(h.CheckAuth))
 }

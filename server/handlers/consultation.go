@@ -8,11 +8,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
-
-	// "github.com/golang-jwt/jwt/v4"
-	"github.com/labstack/echo/v4"
 )
 
 type handlerConsultation struct {
@@ -23,39 +21,45 @@ func HandlerConsultation(ConsultationRepository repositories.ConsultationReposit
 	return &handlerConsultation{ConsultationRepository}
 }
 
-func (h *handlerConsultation) FindConsultations(c echo.Context) error {
+func (h *handlerConsultation) FindConsultations(c *gin.Context) {
 	consultations, err := h.ConsultationRepository.FindConsultations()
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Find consultation success", Data: consultations})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Find consultation success", Data: consultations})
+	return
 }
 
-func (h *handlerConsultation) GetConsultation(c echo.Context) error {
+func (h *handlerConsultation) GetConsultation(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	consult, err := h.ConsultationRepository.GetConsultation(int(id))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: consult})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: consult})
+	return
 }
 
-func (h *handlerConsultation) CreateConsultation(c echo.Context) error {
-	userLogin := c.Get("userLogin")
+func (h *handlerConsultation) CreateConsultation(c *gin.Context) {
+	userLogin := c.MustGet("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
 	var request consultationdto.CreateConsultationRequest
 	err := c.Bind(&request)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
 
 	validation := validator.New()
 	err = validation.Struct(request)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
 
 	consultation := models.Consultation{
@@ -76,39 +80,46 @@ func (h *handlerConsultation) CreateConsultation(c echo.Context) error {
 
 	data, err := h.ConsultationRepository.CreateConsultation(consultation)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create consultation success", Data: data})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create consultation success", Data: data})
+	return
 }
 
-func (h *handlerConsultation) DeleteConsultation(c echo.Context) error {
+func (h *handlerConsultation) DeleteConsultation(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	consultation, err := h.ConsultationRepository.GetConsultation(id)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	data, err := h.ConsultationRepository.DeleteConsultation(consultation)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Delete consultation success", Data: convertResponseConsultation(data)})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Delete consultation success", Data: convertResponseConsultation(data)})
+	return
 
 }
 
-func (h *handlerConsultation) UpdateConsultation(c echo.Context) error {
+func (h *handlerConsultation) UpdateConsultation(c *gin.Context) {
 	request := new(consultationdto.UpdateConsultationRequest)
 	if err := c.Bind(request); err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	id, _ := strconv.Atoi(c.Param("id"))
 	consultation, err := h.ConsultationRepository.GetConsultation(int(id))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	if request.Fullname != "" {
@@ -165,21 +176,25 @@ func (h *handlerConsultation) UpdateConsultation(c echo.Context) error {
 
 	data, err := h.ConsultationRepository.UpdateConsultation(consultation)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: data})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: data})
+	return
 }
 
-func (h *handlerConsultation) FindMyConsultation(c echo.Context) error {
+func (h *handlerConsultation) FindMyConsultation(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	consult, err := h.ConsultationRepository.FindMyConsultation(id)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
-	return c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: consult})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: consult})
+	return
 }
 
 func convertResponseConsultation(u models.Consultation) consultationdto.ConsultationResponse {

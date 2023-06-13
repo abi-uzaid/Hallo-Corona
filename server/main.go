@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"hallo-corona/database"
-	"hallo-corona/pkg/mysql"
+	"hallo-corona/pkg/postgres"
 	"hallo-corona/routes"
 	"os"
 
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -18,23 +18,30 @@ func main() {
 		panic("Failed to load env file")
 	}
 
-	e := echo.New()
+	postgres.DatabaseInit()
 
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	database.RunMigration()
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
-		AllowMethods: []string{echo.GET, echo.POST, echo.PATCH, echo.DELETE},
-		AllowHeaders: []string{"X-Requested-With", "Content-Type", "Authorization"},
+		AllowMethods: []string{"GET", "PATCH", "POST", "DELETE"},
+		AllowHeaders: []string{"x-Requested-With", "Content-Type", "Authorization"},
 	}))
 
-	mysql.DatabaseInit()
-	database.RunMigration()
+	routes.RouteInit(r.Group("/api/v1"))
 
-	routes.RouteInit(e.Group("/api/v1"))
+	r.Static("/uploads", "./uploads")
 
-	e.Static("/uploads", "./uploads")
+	r.Use(gin.Logger())
 
 	var port = os.Getenv("PORT")
 
-	fmt.Println("Server running localhost" + port)
-	e.Logger.Fatal(e.Start(":" + port))
+	fmt.Println("Server running localhost:" + port)
+
+	r.Run(":" + port)
+
+	// fmt.Println("Server Started")
+	// http.ListenAndServe("localhost:5000", r)
 }

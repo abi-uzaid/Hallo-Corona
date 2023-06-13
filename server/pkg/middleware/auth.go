@@ -1,12 +1,11 @@
 package middleware
 
 import (
-	dto "hallo-corona/dto/result"
 	jwtToken "hallo-corona/pkg/jwt"
 	"net/http"
 	"strings"
 
-	"github.com/labstack/echo/v4"
+	"github.com/gin-gonic/gin"
 )
 
 type Result struct {
@@ -15,22 +14,24 @@ type Result struct {
 	Message string      `json:"message"`
 }
 
-func Auth(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		token := c.Request().Header.Get("Authorization")
+func Auth(next gin.HandlerFunc) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.GetHeader("Authorization")
 
 		if token == "" {
-			return c.JSON(http.StatusUnauthorized, dto.ErrorResult{Code: http.StatusBadRequest, Message: "unauthorized"})
+			c.JSON(http.StatusUnauthorized, Result{Code: http.StatusUnauthorized, Message: "unauthorized 1"})
+			return
 		}
 
 		token = strings.Split(token, " ")[1]
 		claims, err := jwtToken.DecodeToken(token)
 
 		if err != nil {
-			return c.JSON(http.StatusUnauthorized, Result{Code: http.StatusUnauthorized, Message: "error dissini"})
+			c.JSON(http.StatusUnauthorized, Result{Code: http.StatusUnauthorized, Message: "unauthorized 2"})
+			return
 		}
 
 		c.Set("userLogin", claims)
-		return next(c)
+		next(c)
 	}
 }
