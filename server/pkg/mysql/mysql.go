@@ -19,7 +19,7 @@ func DatabaseInit() {
 	var MYSQLPASSWORD = os.Getenv("MYSQLPASSWORD")
 	var MYSQLUSER = os.Getenv("MYSQLUSER")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", MYSQLUSER, MYSQLPASSWORD, MYSQLHOST, MYSQLPORT, MYSQLDATABASE)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", MYSQLUSER, MYSQLPASSWORD, MYSQLHOST, MYSQLPORT, MYSQLDATABASE)
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
