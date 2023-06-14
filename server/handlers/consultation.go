@@ -28,7 +28,6 @@ func (h *handlerConsultation) FindConsultations(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Find consultation success", Data: consultations})
-	return
 }
 
 func (h *handlerConsultation) GetConsultation(c *gin.Context) {
@@ -39,9 +38,7 @@ func (h *handlerConsultation) GetConsultation(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: consult})
-	return
 }
 
 func (h *handlerConsultation) CreateConsultation(c *gin.Context) {
@@ -83,9 +80,7 @@ func (h *handlerConsultation) CreateConsultation(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create consultation success", Data: data})
-	return
 }
 
 func (h *handlerConsultation) DeleteConsultation(c *gin.Context) {
@@ -102,10 +97,7 @@ func (h *handlerConsultation) DeleteConsultation(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Delete consultation success", Data: convertResponseConsultation(data)})
-	return
-
 }
 
 func (h *handlerConsultation) UpdateConsultation(c *gin.Context) {
@@ -179,9 +171,7 @@ func (h *handlerConsultation) UpdateConsultation(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: data})
-	return
 }
 
 func (h *handlerConsultation) FindMyConsultation(c *gin.Context) {
@@ -194,7 +184,6 @@ func (h *handlerConsultation) FindMyConsultation(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: consult})
-	return
 }
 
 func convertResponseConsultation(u models.Consultation) consultationdto.ConsultationResponse {

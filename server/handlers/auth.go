@@ -64,7 +64,7 @@ func (h *handlerAuth) Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Your registration is success", Data: data})
-	return
+
 }
 
 func (h *handlerAuth) Login(c *gin.Context) {
@@ -100,7 +100,7 @@ func (h *handlerAuth) Login(c *gin.Context) {
 	token, generateTokenErr := jwtToken.GenerateToken(&claims)
 	if generateTokenErr != nil {
 		log.Println(generateTokenErr)
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error" : "Unauthorized"})
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
@@ -118,7 +118,7 @@ func (h *handlerAuth) Login(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: loginResponse})
-	return
+
 }
 
 func (h *handlerAuth) CheckAuth(c *gin.Context) {
@@ -128,7 +128,6 @@ func (h *handlerAuth) CheckAuth(c *gin.Context) {
 	user, _ := h.AuthRepository.CheckAuth(int(userId))
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: responseCheckAuth(user)})
-	return
 }
 
 // type resp struct {

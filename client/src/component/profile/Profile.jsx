@@ -21,8 +21,10 @@ export default function Profile() {
     return response.data.data;
   });
 
+
   const [modalShowImage, setModalShowImage] = useState(false);
 
+  
   const [modalShow, setModalShow] = useState(false);
   return (
     <Container>
@@ -120,12 +122,6 @@ export default function Profile() {
               </Row>
             </Col>
             <Col md={4}>
-              {/* <img
-                src="/assets/img/hanni.webp"
-                alt="profile"
-                className="img-fluid mb-2"
-                style={{ borderRadius: "10px" }}
-              /> */}
               {state.user.listAs === "patient" ? (
                 <img
                   className="img-fluid mb-2"

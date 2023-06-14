@@ -46,10 +46,11 @@ func (h *handlerArticle) GetArticel(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: convertResponseArticle(products)})
-	return
 }
 
 func (h *handlerArticle) CreateArticle(c *gin.Context) {
+	c.Header("Content-Type", "multipart/form-data")
+
 	userLogin := c.MustGet("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
@@ -80,7 +81,7 @@ func (h *handlerArticle) CreateArticle(c *gin.Context) {
 	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
 
 	// Upload file to Cloudinary ...
-	resp, err := cld.Upload.Upload(ctx, dataFile, uploader.UploadParams{Folder: "hallo corona"})
+	resp, err := cld.Upload.Upload(ctx, dataFile, uploader.UploadParams{Folder: "uploads"})
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -103,7 +104,6 @@ func (h *handlerArticle) CreateArticle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create article success", Data: data})
-	return
 
 }
 
@@ -174,7 +174,6 @@ func (h *handlerArticle) UpdateArticle(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: "Access denied"})
-	return
 }
 
 func (h *handlerArticle) DeleteArticle(c *gin.Context) {
@@ -197,7 +196,6 @@ func (h *handlerArticle) DeleteArticle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Delete article success", Data: articleDel})
-	return
 }
 
 func (h *handlerArticle) FindMyArticle(c *gin.Context) {
@@ -214,7 +212,6 @@ func (h *handlerArticle) FindMyArticle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Succes", Data: articles})
-	return
 }
 
 func convertResponseArticle(u models.Article) articledto.ArticleResponse {

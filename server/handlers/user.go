@@ -28,7 +28,7 @@ func (h *handler) FindUsers(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: users})
-	return
+
 }
 
 func (h *handler) GetUser(c *gin.Context) {
@@ -41,7 +41,7 @@ func (h *handler) GetUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "User data successfully obtained", Data: user})
-	return
+
 }
 
 func (h *handler) UpdateUser(c *gin.Context) {
@@ -95,7 +95,7 @@ func (h *handler) UpdateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "User data updated successfully", Data: convertResponse(data)})
-	return
+
 }
 
 func (h *handler) DeleteUser(c *gin.Context) {
@@ -116,7 +116,7 @@ func (h *handler) DeleteUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Delete Success", Data: convertResponse(data)})
-	return
+
 }
 
 func convertResponse(u models.User) usersdto.UserResponse {
@@ -155,7 +155,7 @@ func (h *handler) ChangeImage(c *gin.Context) {
 	user, err := h.UserRepository.GetUser(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
-		return
+
 	}
 
 	// if request.Title != "" {
@@ -176,5 +176,5 @@ func (h *handler) ChangeImage(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Data: data})
-	return
+
 }
