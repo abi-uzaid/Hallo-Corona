@@ -21,7 +21,7 @@ export default function ProfileDoc() {
                   />
                 </Col>
                 <Col md={11} className="ps-4">
-                  <span className="text-bold">Radif Ganteng</span>
+                  <span className="text-bold">Prof. Dr. abi uzaid MM.Mh</span>
                   <br />
                   <span className="text-gray">Full Name</span>
                 </Col>
@@ -35,7 +35,7 @@ export default function ProfileDoc() {
                   />
                 </Col>
                 <Col md={11} className="ps-4">
-                  <span className="text-bold">radifgans@gmail.com</span>
+                  <span className="text-bold">Abiuzaid@gmail.com</span>
                   <br />
                   <span className="text-gray">Email</span>
                 </Col>
@@ -92,7 +92,7 @@ export default function ProfileDoc() {
                 </Col>
                 <Col md={11} className="ps-4">
                   <span className="text-bold">
-                    Perumahan Permata Bintaro Residence C-3
+                    Depok News
                   </span>
                   <br />
                   <span className="text-gray">Address</span>
