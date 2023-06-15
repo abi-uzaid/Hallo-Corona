@@ -21,6 +21,8 @@ export default function Profile() {
     return response.data.data;
   });
 
+  console.log(userId, "ini cookkkk");
+
 
   const [modalShowImage, setModalShowImage] = useState(false);
 

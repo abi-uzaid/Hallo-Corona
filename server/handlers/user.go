@@ -87,6 +87,9 @@ func (h *handler) UpdateUser(c *gin.Context) {
 	if request.Address != "" {
 		user.Address = request.Address
 	}
+	if request.Image != "" {
+		user.Address = request.Image
+	}
 
 	data, err := h.UserRepository.UpdateUser(user)
 	if err != nil {
@@ -157,7 +160,6 @@ func (h *handler) ChangeImage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
 
 	}
-
 
 	data, err := h.UserRepository.ChangeImage(user)
 	if err != nil {

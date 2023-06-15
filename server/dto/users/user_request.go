@@ -9,6 +9,7 @@ type CreateUserRequest struct {
 	Gender   string `gorm:"type: varchar(100)" json:"gender" validate:"required"`
 	Phone    string `gorm:"type: varchar(100)" json:"phone" validate:"required"`
 	Address  string `gorm:"type: text" json:"address" validate:"required"`
+	Image    string `gorm:"type: varchar(255)" json:"image" form:"image"`
 }
 
 type UpdateUserRequest struct {
@@ -21,6 +22,7 @@ type UpdateUserRequest struct {
 	Gender   string `gorm:"type: varchar(100)" json:"gender"`
 	Phone    string `gorm:"type: varchar(100)" json:"phone"`
 	Address  string `gorm:"type: text" json:"address"`
+	Image    string `gorm:"type: varchar(255)" json:"image"`
 }
 
 type ChangeImageRequest struct {
