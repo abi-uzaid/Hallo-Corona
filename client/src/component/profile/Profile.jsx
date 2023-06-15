@@ -16,12 +16,12 @@ export default function Profile() {
   const [state, dispatch] = useContext(UserContext);
   const id = state.user.id;
 
-  let { data: userId } = useQuery("userCache", async () => {
-    const response = await API.get("/user");
-    return response.data.data;
-  });
+  // let { data: userId } = useQuery("userCache", async () => {
+  //   const response = await API.get("/user");
+  //   return response.data.data;
+  // });
 
-  console.log(userId, "ini cookkkk");
+  // console.log(userId, "ini cookkkk");
 
 
   const [modalShowImage, setModalShowImage] = useState(false);
@@ -128,14 +128,14 @@ export default function Profile() {
                 <img
                   className="img-fluid mb-2"
                   style={{ borderRadius: "10px" }}
-                  src={userId?.image ? userId?.image : patient}
+                  src={state.user.image ? state.user.image : patient}
                   alt=""
                 />
               ) : (
                 <img
                   className="img-fluid mb-2"
                   style={{ borderRadius: "10px", width: "240px" }}
-                  src={userId?.image ? userId?.image : doctor}
+                  src={state.user.image ? state.user.image : doctor}
                   alt=""
                 />
               )}

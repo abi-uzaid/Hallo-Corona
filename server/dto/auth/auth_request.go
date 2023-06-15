@@ -10,6 +10,7 @@ type RegisterRequest struct {
 	Gender   string `gorm:"type: varchar(100)" json:"gender" validate:"required"`
 	Phone    string `gorm:"type: varchar(100)" json:"phone" validate:"required"`
 	Address  string `gorm:"type: text" json:"address" validate:"required"`
+	Image    string `gorm:"type: varchar(255)" json:"image" form:"image"`
 }
 
 type LoginRequest struct {
