@@ -75,27 +75,27 @@ func (h *handlerArticle) CreateArticle(c *gin.Context) {
 			return
 		}
 
-		var ctx = context.Background()
-		var CLOUD_NAME = os.Getenv("CLOUD_NAME")
-		var API_KEY = os.Getenv("API_KEY")
-		var API_SECRET = os.Getenv("API_SECRET")
+		// var ctx = context.Background()
+		// var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+		// var API_KEY = os.Getenv("API_KEY")
+		// var API_SECRET = os.Getenv("API_SECRET")
 
-		// Add your Cloudinary credentials ...
-		cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+		// // Add your Cloudinary credentials ...
+		// cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
 
-		// Upload file to Cloudinary ...
-		resp, err := cld.Upload.Upload(ctx, dataFile, uploader.UploadParams{Folder: "uploads"})
+		// // Upload file to Cloudinary ...
+		// resp, err := cld.Upload.Upload(ctx, dataFile, uploader.UploadParams{Folder: "uploads"})
 
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+		// if err != nil {
+		// 	fmt.Println(err.Error())
+		// }
 
 		// submit to db article
 		article := models.Article{
 			Title:    request.Title,
 			UserID:   request.UserID,
 			User:     models.UserResponse{},
-			Image:    resp.SecureURL,
+			Image:    request.Image,
 			Desc:     request.Desc,
 			Category: request.Category,
 		}
