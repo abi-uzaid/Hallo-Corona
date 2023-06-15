@@ -102,20 +102,6 @@ function App() {
           </Routes>
         </>
       )}
-      {/* <Header />
-      <Routes>
-        <Route path="/" element={<Home />} /> */}
-      {/* <Route path="/patient/profile" element={<ProfilePatient />} />
-        <Route path="/doctor/profile" element={<ProfileDoctor />} /> */}
-      {/* <Route path="/add-article" element={<AddArticle />} />
-        <Route path="/inbox" element={<Inbox />} /> */}
-      {/* <Route path="/inbox-done" element={<InboxAccept />} /> */}
-      {/* <Route path="/sign-in" element={<ModalSignIn />} />
-        <Route path="/sign-up" element={<ModalSignUp />} />
-        <Route path="/detail-article" element={<DetailArticle />} />
-        <Route path="/patient/reservation" element={<ReservationPage />} />
-        <Route path="/doctor" element={<ReservationData />} />
-      </Routes> */}
     </>
   );
 }
