@@ -92,9 +92,9 @@ func (h *handlerArticle) CreateArticle(c *gin.Context) {
 
 	// submit to db article
 	article := models.Article{
-		Title:    request.Title,
-		UserID:   request.UserID,
-		User:     models.UserResponse{},
+		Title:  request.Title,
+		UserID: request.UserID,
+		// User:     models.UserResponse{},
 		Image:    request.Image,
 		Desc:     request.Desc,
 		Category: request.Category,
@@ -107,7 +107,7 @@ func (h *handlerArticle) CreateArticle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create article success", Data: convertResponseArticle(data)})
-	return
+
 	// } else {
 	// 	c.JSON(http.StatusUnauthorized, dto.ErrorResult{Code: http.StatusUnauthorized, Message: "error"})
 	// 	return
