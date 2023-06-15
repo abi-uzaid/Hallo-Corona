@@ -7,8 +7,8 @@ import (
 
 type ArticleResponse struct {
 	ID        int                 `json:"id" gorm:"primary_key:auto_increment"`
-	Title     string              `json:"title" gorm:"type:varchar(255)"`
-	Image     string              `json:"image" gorm:"type: varchar(255)"`
+	Title     string              `json:"title" gorm:"type:varchar(255)" form:"title"`
+	Image     string              `json:"image" gorm:"type: varchar(255)" form:"image"`
 	User      models.UserResponse `json:"user" gorm:"foreignKey:UserID"`
 	Desc      string              `json:"desc" gorm:"type:text" form:"desc"`
 	Category  string              `json:"category" gorm:"type:varchar(255)" form:"category"`

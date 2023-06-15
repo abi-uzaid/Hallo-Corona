@@ -107,6 +107,7 @@ func (h *handlerArticle) CreateArticle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create article success", Data: convertResponseArticle(data)})
+	return
 	// } else {
 	// 	c.JSON(http.StatusUnauthorized, dto.ErrorResult{Code: http.StatusUnauthorized, Message: "error"})
 	// 	return
