@@ -14,7 +14,7 @@ import (
 func UploadFile(next gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		file, err := c.FormFile("image")
-		if file != nil {
+		// if file != nil {
 			if err != nil {
 				c.JSON(http.StatusBadRequest, err.Error())
 				return
@@ -45,8 +45,8 @@ func UploadFile(next gin.HandlerFunc) gin.HandlerFunc {
 			c.Set("dataFile", resp.SecureURL)
 			next(c)
 		}
-		c.Set("dataFile", "")
-		next(c)
+		// c.Set("dataFile", "")
+		// next(c)
 
-	}
+	// }
 }
