@@ -34,7 +34,7 @@ export default function ImageModal(props) {
   const handleSubmit = useMutation(async (e) => {
     try {
       e.preventDefault();
-      // Store data with FormData as object
+
       const formData = new FormData();
       if (form.image) {
         formData.set("image", form?.image[0], form?.image[0]?.name);

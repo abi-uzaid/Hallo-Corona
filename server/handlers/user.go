@@ -158,17 +158,6 @@ func (h *handler) ChangeImage(c *gin.Context) {
 
 	}
 
-	// if request.Title != "" {
-	// 	article.Title = request.Title
-	// }
-
-	// if request.Image != "" {
-	// 	article.Image = request.Image
-	// }
-
-	// if request.Desc != "" {
-	// 	article.Desc = request.Desc
-	// }
 
 	data, err := h.UserRepository.ChangeImage(user)
 	if err != nil {
