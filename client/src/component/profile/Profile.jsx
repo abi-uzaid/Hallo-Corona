@@ -21,7 +21,7 @@ export default function Profile() {
     return response.data.data;
   });
 
-  console.log(userId[0]?.image, "ini cookkkk");
+  console.log(userId, "ini cookkkk");
 
 
   const [modalShowImage, setModalShowImage] = useState(false);
@@ -128,14 +128,14 @@ export default function Profile() {
                 <img
                   className="img-fluid mb-2"
                   style={{ borderRadius: "10px" }}
-                  src={userId[0]?.image ? userId[0]?.image : patient}
+                  src={userId?.image ? userId?.image : patient}
                   alt=""
                 />
               ) : (
                 <img
                   className="img-fluid mb-2"
                   style={{ borderRadius: "10px", width: "240px" }}
-                  src={userId[0]?.image ? userId[0]?.image : doctor}
+                  src={userId?.image ? userId?.image : doctor}
                   alt=""
                 />
               )}

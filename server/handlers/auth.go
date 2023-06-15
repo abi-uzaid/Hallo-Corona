@@ -154,6 +154,6 @@ func responseCheckAuth(u models.User) authdto.CheckAuthResponse {
 		Gender:  u.Gender,
 		Phone:   u.Phone,
 		Address: u.Address,
-		// Image:   u.Image,
+		Image:   u.Image,
 	}
 }
