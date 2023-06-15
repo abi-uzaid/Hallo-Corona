@@ -1,18 +1,14 @@
 package handlers
 
 import (
-	"context"
 	"fmt"
 	articledto "hallo-corona/dto/article"
 	dto "hallo-corona/dto/result"
 	"hallo-corona/models"
 	"hallo-corona/repositories"
 	"net/http"
-	"os"
 	"strconv"
 
-	"github.com/cloudinary/cloudinary-go/v2"
-	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
@@ -128,9 +124,9 @@ func (h *handlerArticle) UpdateArticle(c *gin.Context) {
 		dataFile := c.MustGet("dataFile").(string)
 
 		request := articledto.UpdateArticleRequest{
-			Title: c.PostForm("title"),
+			Title: c.Request.FormValue("title"),
 			Image: dataFile,
-			Desc:  c.PostForm("desc"),
+			Desc:  c.Request.FormValue("desc"),
 		}
 
 		validation := validator.New()
@@ -138,21 +134,6 @@ func (h *handlerArticle) UpdateArticle(c *gin.Context) {
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
 			return
-		}
-
-		var ctx = context.Background()
-		var CLOUD_NAME = os.Getenv("CLOUD_NAME")
-		var API_KEY = os.Getenv("API_KEY")
-		var API_SECRET = os.Getenv("API_SECRET")
-
-		// Add your Cloudinary credentials ...
-		cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
-
-		// Upload file to Cloudinary ...
-		resp, err := cld.Upload.Upload(ctx, dataFile, uploader.UploadParams{Folder: "hallo corona"})
-
-		if err != nil {
-			fmt.Println(err.Error())
 		}
 
 		article, err := h.ArticleRepository.GetArticle(id)
@@ -166,7 +147,7 @@ func (h *handlerArticle) UpdateArticle(c *gin.Context) {
 		}
 
 		if request.Image != "" {
-			article.Image = resp.SecureURL
+			article.Image = request.Image
 		}
 
 		if request.Desc != "" {

@@ -25,7 +25,7 @@ function Article() {
                 >
                   <Card.Body>
                     <Card.Title>{item.title}</Card.Title>
-                    <Card.Text style={{ color: "#6C6C6C" }}>
+                    <Card.Text className="text-truncate" style={{ color: "#6C6C6C" }}>
                       {item.desc}
                     </Card.Text>
                   </Card.Body>
