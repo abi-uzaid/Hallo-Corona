@@ -47,11 +47,17 @@ func (h *handler) GetUser(c *gin.Context) {
 func (h *handler) UpdateUser(c *gin.Context) {
 	userLogin := c.MustGet("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
+	dataFile := c.MustGet("dataFile").(string)
 
-	request := new(usersdto.UpdateUserRequest)
-	if err := c.Bind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()})
-		return
+	request := usersdto.UpdateUserRequest{
+		Image:    dataFile,
+		Fullname: c.Request.FormValue("fullname"),
+		Username: c.Request.FormValue("username"),
+		Email:    c.Request.FormValue("email"),
+		Password: c.Request.FormValue("password"),
+		Gender:   c.Request.FormValue("gender"),
+		Phone:    c.Request.FormValue("phone"),
+		Address:  c.Request.FormValue("address"),
 	}
 
 	user, err := h.UserRepository.GetUser(int(userId))
