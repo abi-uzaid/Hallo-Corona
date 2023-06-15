@@ -49,20 +49,20 @@ func (h *handlerArticle) GetArticel(c *gin.Context) {
 }
 
 func (h *handlerArticle) CreateArticle(c *gin.Context) {
-	// c.Header("Content-Type", "multipart/form-data")
+	c.Header("Content-Type", "multipart/form-data")
 
 	userLogin := c.MustGet("userLogin")
-	userId := userLogin.(jwt.MapClaims)["id"].(bool)
+	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
 	// if userId {
 	dataFile := c.MustGet("dataFile").(string)
 	fmt.Println("this is data file", dataFile)
 
-	UserID, _ := strconv.Atoi(c.Request.FormValue("userId"))
+	// UserID, _ := strconv.Atoi(c.Request.FormValue("userId"))
 
 	request := articledto.CreateArticleRequest{
 		Title:    c.Request.FormValue("title"),
-		UserID:   UserID,
+		UserID:   int(userId),
 		Image:    dataFile,
 		Desc:     c.Request.FormValue("desc"),
 		Category: c.Request.FormValue("category"),
