@@ -94,7 +94,7 @@ func (h *handler) UpdateUser(c *gin.Context) {
 		user.Address = request.Address
 	}
 	if request.Image != "" {
-		user.Address = request.Image
+		user.Image = request.Image
 	}
 
 	data, err := h.UserRepository.UpdateUser(user)
