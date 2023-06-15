@@ -17,20 +17,26 @@ export default function Inbox() {
     return response.data.data;
   });
 
+  console.log(consultations, "ini consultasi");
   return (
     <>
       {consultations?.length != 0 ? (
         <Container>
-          <h2 className="fw-bold text-primary-color mt-5">Consultation</h2>
-          <Link
-            to="/consultation-form"
-            className="d-flex justify-content-end"
-            style={{ textDecoration: "none" }}
-          >
-            <Button variant="light" className="button2 px-3 fw-bold rounded-2">
-              Request New Consultation
-            </Button>
-          </Link>
+          <div>
+            <h2 className="fw-bold text-primary-color mt-5">Consultation</h2>
+            <Link
+              to="/consultation-form"
+              className="d-flex justify-content-end"
+              style={{ textDecoration: "none" }}
+            >
+              <Button
+                variant="light"
+                className="button2 px-3 fw-bold rounded-2"
+              >
+                Request New Consultation
+              </Button>
+            </Link>
+          </div>
           {consultations?.map((item, index) => (
             <Card
               style={{ boxShadow: "0 0 5px gray" }}
@@ -41,7 +47,7 @@ export default function Inbox() {
                 <Row>
                   <Col md={1}>
                     <img
-                      src="/assets/img/hanni.webp"
+                      src={state.user.image}
                       className="rounded-circle"
                       style={{
                         width: "70px",
@@ -100,7 +106,7 @@ export default function Inbox() {
                         >
                           Here
                         </a>
-                        <p className="mt-2">Dr.Rizki</p>
+                        <h6 className="mt-2">Dr. abi uzaid</h6>
                       </div>
                     </div>
                   </Card.Footer>

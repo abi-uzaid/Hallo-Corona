@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "react-query";
 import jwt from "jwt-decode";
 import { UserContext } from "../../context/userContext";
 import { API } from "../../config/api";
+import Swal from "sweetalert2";
 
 export default function ImageModal(props) {
   const [preview, setPreview] = useState();
@@ -34,7 +35,6 @@ export default function ImageModal(props) {
   const handleSubmit = useMutation(async (e) => {
     try {
       e.preventDefault();
-
       const formData = new FormData();
       if (form.image) {
         formData.set("image", form?.image[0], form?.image[0]?.name);
@@ -43,7 +43,16 @@ export default function ImageModal(props) {
       // Insert product data
       const response = await API.patch("/user", formData);
 
-      alert("successfully change your image!");
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Change Photo Image Success",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      window.location.reload();
+      props.refecth();
+      props.onHide();
     } catch (error) {
       console.log(error);
     }

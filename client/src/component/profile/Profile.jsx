@@ -16,12 +16,10 @@ export default function Profile() {
   const [state, dispatch] = useContext(UserContext);
   const id = state.user.id;
 
-  // let { data: userId } = useQuery("userCache", async () => {
-  //   const response = await API.get("/user");
-  //   return response.data.data;
-  // });
-
-  // console.log(userId, "ini cookkkk");
+  let { data: userId, refetch } = useQuery("userCache", async () => {
+    const response = await API.get("/check-auth");
+    return response.data.data;
+  });
 
 
   const [modalShowImage, setModalShowImage] = useState(false);
@@ -36,7 +34,7 @@ export default function Profile() {
       >
         <Card.Body>
           <Row>
-            <Col md={8}>
+            <Col className="ms-4" md={7}>
               <h5 className="text-bold mb-2">Personal Info</h5>
               <Row className="my-3">
                 <Col md={1}>
@@ -127,14 +125,14 @@ export default function Profile() {
               {state.user.listAs === "patient" ? (
                 <img
                   className="img-fluid mb-2"
-                  style={{ borderRadius: "10px" }}
+                  style={{ borderRadius: "10px", width: "290px", height:"350px" }}
                   src={state.user.image ? state.user.image : patient}
                   alt=""
                 />
               ) : (
                 <img
                   className="img-fluid mb-2"
-                  style={{ borderRadius: "10px", width: "240px" }}
+                  style={{ borderRadius: "10px", width: "290px", height:"350px" }}
                   src={state.user.image ? state.user.image : doctor}
                   alt=""
                 />
@@ -151,6 +149,7 @@ export default function Profile() {
               <ImageModal
                 show={modalShowImage}
                 onHide={() => setModalShowImage(false)}
+                refecth={refetch}
               />
             </Col>
           </Row>

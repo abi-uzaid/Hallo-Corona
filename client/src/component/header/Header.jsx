@@ -165,7 +165,6 @@ function Header() {
                         />{" "}
                         Logout
                       </NavDropdown.Item>
-                      <NavDropdown.Divider />
                     </NavDropdown>
                   </Nav>
                 ) : (

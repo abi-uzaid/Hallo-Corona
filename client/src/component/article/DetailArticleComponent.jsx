@@ -20,16 +20,16 @@ function DetailArticleComponent() {
         Author :{" "}
         <span className="text-primary-color">Dr.{article?.user.fullname}</span>
       </p>
-      <Card className="py-5 shadow my-5 border-0">
+      <Card className="py-5 shadow-lg my-5 border-0">
         <Card.Img
           variant="top"
           src={article?.image}
-          className="mx-auto rounded-0"
+          className="mx-auto rounded-top shadow-sm"
           style={{ width: "85%", height: "30%" }}
         />
         <Card.Body className="mx-auto" style={{ width: "85%" }}>
           <Card.Title className="mt-3">
-            <p className="category px-3 py-1 rounded-pill">
+            <p className="category px-3 py-1 shadow-sm rounded-pill">
               {article?.category}
             </p>
           </Card.Title>

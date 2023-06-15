@@ -7,7 +7,7 @@ function Home() {
     <>
       <Jumbotron />
       <h1 className="text-center my-5" style={{ color: "#FF6185" }}>
-        Artikel Hari ini
+        Artikel Terbaru
       </h1>
       <Article />
     </>
