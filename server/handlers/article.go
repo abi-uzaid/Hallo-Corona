@@ -49,7 +49,7 @@ func (h *handlerArticle) GetArticel(c *gin.Context) {
 }
 
 func (h *handlerArticle) CreateArticle(c *gin.Context) {
-	c.Header("Content-Type", "multipart/form-data")
+	// c.Header("Content-Type", "multipart/form-data")
 
 	userLogin := c.MustGet("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
@@ -106,7 +106,7 @@ func (h *handlerArticle) CreateArticle(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create article success", Data: convertResponseArticle(data)})
+	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create article success", Data: data})
 
 	// } else {
 	// 	c.JSON(http.StatusUnauthorized, dto.ErrorResult{Code: http.StatusUnauthorized, Message: "error"})
