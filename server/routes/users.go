@@ -17,5 +17,5 @@ func UserRoutes(r *gin.RouterGroup) {
 	r.GET("/user/:id", h.GetUser)
 	r.PATCH("/user", middleware.Auth(h.UpdateUser))
 	r.DELETE("/user", middleware.Auth(h.DeleteUser))
-	r.PATCH("/change-image/{id}", middleware.UploadFile(h.ChangeImage))
+	r.PATCH("/change-image/:id", middleware.UploadFile(h.ChangeImage))
 }

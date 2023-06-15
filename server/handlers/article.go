@@ -45,16 +45,15 @@ func (h *handlerArticle) GetArticel(c *gin.Context) {
 }
 
 func (h *handlerArticle) CreateArticle(c *gin.Context) {
-	// c.Header("Content-Type", "multipart/form-data")
+	
 
 	userLogin := c.MustGet("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
-	// if userId {
+	
 	dataFile := c.MustGet("dataFile").(string)
 	fmt.Println("this is data file", dataFile)
 
-	// UserID, _ := strconv.Atoi(c.Request.FormValue("userId"))
 
 	request := articledto.CreateArticleRequest{
 		Title:    c.Request.FormValue("title"),
@@ -71,20 +70,6 @@ func (h *handlerArticle) CreateArticle(c *gin.Context) {
 		return
 	}
 
-	// var ctx = context.Background()
-	// var CLOUD_NAME = os.Getenv("CLOUD_NAME")
-	// var API_KEY = os.Getenv("API_KEY")
-	// var API_SECRET = os.Getenv("API_SECRET")
-
-	// // Add your Cloudinary credentials ...
-	// cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
-
-	// // Upload file to Cloudinary ...
-	// resp, err := cld.Upload.Upload(ctx, dataFile, uploader.UploadParams{Folder: "uploads"})
-
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// }
 
 	// submit to db article
 	article := models.Article{
@@ -101,14 +86,7 @@ func (h *handlerArticle) CreateArticle(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusOK, dto.SuccessResult{Code: http.StatusOK, Message: "Create article success", Data: data})
-
-	// } else {
-	// 	c.JSON(http.StatusUnauthorized, dto.ErrorResult{Code: http.StatusUnauthorized, Message: "error"})
-	// 	return
-	// }
-
 }
 
 func (h *handlerArticle) UpdateArticle(c *gin.Context) {
